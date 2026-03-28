@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>버튼 잡기 게임</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Pretendard", "Noto Sans KR", sans-serif;
+    }
+
+    body {
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .game-box {
+      width: 420px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      z-index: 2;
+    }
+
+    .sub {
+      position: absolute;
+      top: 48px;
+      left: 20px;
+      color: rgba(255,255,255,0.75);
+      font-size: 14px;
+      z-index: 2;
+    }
+
+    .target-btn {
+      position: absolute;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #8a63ff, #3ddcff);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(138,99,255,0.4);
+      transition: left 0.2s ease, top 0.2s ease, transform 0.15s ease;
+    }
+
+    .target-btn:active {
+      transform: scale(0.95);
+    }
+
+    .win-screen {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 10, 20, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 5;
+    }
+
+    .win-screen.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .win-screen h2 {
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
+
+    .win-screen p {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .restart-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 999px;
+      background: white;
+      color: #222;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-box" id="gameBox">
+    <div class="info">잡은 횟수: <span id="score">0</span> / 5</div>
+    <div class="sub">버튼을 5번 잡아보세요</div>
+
+    <button class="target-btn" id="targetBtn">잡아봐</button>
+
+    <div class="win-screen" id="winScreen">
+      <h2>성공!</h2>
+      <p>버튼을 모두 잡았습니다</p>
+      <button class="restart-btn" onclick="restartGame()">다시하기</button>
+    </div>
+  </div>
+
+  <script>
+    const gameBox = document.getElementById("gameBox");
+    const targetBtn = document.getElementById("targetBtn");
+    const scoreEl = document.getElementById("score");
+    const winScreen = document.getElementById("winScreen");
+
+    let score = 0;
+    const goal = 5;
+
+    function moveButton() {
+      const maxX = gameBox.clientWidth - targetBtn.offsetWidth - 10;
+      const maxY = gameBox.clientHeight - targetBtn.offsetHeight - 10;
+
+      const randomX = Math.random() * maxX;
+      const randomY = 80 + Math.random() * (maxY - 80);
+
+      targetBtn.style.left = `${randomX}px`;
+      targetBtn.style.top = `${randomY}px`;
+    }
+
+    targetBtn.addEventListener("mouseenter", () => {
+      moveButton();
+    });
+
+    targetBtn.addEventListener("click", () => {
+      score++;
+      scoreEl.textContent = score;
+
+      if (score >= goal) {
+        winScreen.classList.add("show");
+        targetBtn.style.display = "none";
+      } else {
+        moveButton();
+      }
+    });
+
+    function restartGame() {
+      score = 0;
+      scoreEl.textContent = score;
+      targetBtn.style.display = "block";
+      winScreen.classList.remove("show");
+      moveButton();
+    }
+
+    moveButton();
+  </script>
+</body>
+</html>
